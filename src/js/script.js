@@ -270,18 +270,16 @@
       const thisWidget = this;
       const newValue = value ? parseInt(value) : 1;
 
-
-
       const minValue = settings.amountWidget.defaultMin;
       const maxValue = settings.amountWidget.defaultMax;
 
-      thisWidget.value = settings.amountWidget.defaultValue;
+      thisWidget.value = settings.amountWidget.defaultValue; // teraz jest pusty input
 
       /* TODO: Add validation */
       if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
         thisWidget.value = newValue;
       }
-      thisWidget.announce();
+      thisWidget.announce(); // Nie wiem, czy umiescilem to we wlasciwym miejscu
       thisWidget.value = newValue;
       //thisWidget.input.value = thisWidget.value;
     }
