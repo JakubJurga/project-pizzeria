@@ -214,17 +214,18 @@
           // check if there is param with a name of paramId in formData and if it includes optionId
           if (optionSelected) {
             // check if the option is not default
-            if (option.default !== true) {
+            if (!option.default) {
               // add option price to price variable
               price += option.price;
-            } else {
-              // check if the option is default
-              if (option.default == true) {
-                // reduce price variable
-                price -= option.price;
-              }
+            }
+          } else {
+            // check if the option is default
+            if (option.default) {
+              // reduce price variable
+              price -= option.price;
             }
           }
+
           if (optionImage) {
             if (optionSelected) {
               optionImage.classList.add(classNames.menuProduct.imageVisible);
@@ -232,7 +233,7 @@
               optionImage.classList.remove (classNames.menuProduct.imageVisible);
             }
           }
-          price = thisProduct.priceSingle
+          price = thisProduct.priceSingle;
           price *= thisProduct.amountWidget.value;
           // update calculated price in the HTML
           thisProduct.priceElem.innerHTML = price;
@@ -257,7 +258,7 @@
         priceSingle: thisProduct.priceSingle,
         price: thisProduct.priceSingle * thisProduct.amountWidget.value,
         //params: thisProduct.prepareCartProductParams();
-        };
+      };
       return productSummary;
     }
 
@@ -267,27 +268,27 @@
       const formData = utils.serializeFormToObject(thisProduct.form);
       const params = {};
 
-    // for very category (param)
-    for(let paramId in thisProduct.data.params) {
-      const param = thisProduct.data.params[paramId];
+      // for very category (param)
+      for(let paramId in thisProduct.data.params) {
+        const param = thisProduct.data.params[paramId];
 
-      params[paramId] = {
-        name: param.label,
-        options: {}
-      };
+        params[paramId] = {
+          name: param.label,
+          options: {}
+        };
 
-      // for every option in this category
-      for(let optionId in param.options) {
-        const option = param.options[optionId];
-        const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
+        // for every option in this category
+        for(let optionId in param.options) {
+          const option = param.options[optionId];
+          const optionSelected = formData[paramId] && formData[paramId].includes(optionId);
 
-        if(optionSelected) {
-          params[paramId].options[optionId] = option.label;
+          if(optionSelected) {
+            params[paramId].options[optionId] = option.label;
+          }
         }
       }
+      return params;
     }
-    return params;
-  }
   }
 
   class AmountWidget {
@@ -296,6 +297,7 @@
 
       thisWidget.getElements(element);
       thisWidget.setValue(thisWidget.input.value);
+      thisWidget.value = settings.amountWidget.defaultValue;
       thisWidget.initActions();
 
 
@@ -313,23 +315,23 @@
       thisWidget.linkIncrease = thisWidget.element.querySelector(select.widgets.amount.linkIncrease);
     }
 
-    setValue (value) {
+    setValue(value){
 
       const thisWidget = this;
       const newValue = value ? parseInt(value) : 1;
 
-      const minValue = settings.amountWidget.defaultMin;
-      const maxValue = settings.amountWidget.defaultMax;
 
-      thisWidget.value = settings.amountWidget.defaultValue; // teraz jest pusty input
+
+      //thisWidget.value = settings.amountWidget.defaultValue; // teraz jest pusty input
 
       /* TODO: Add validation */
-      if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= minValue && newValue <= maxValue) {
+      if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax) {
         thisWidget.value = newValue;
+        thisWidget.announce();  // Nie wiem, czy umiescilem to we wlasciwym miejscu
       }
-      thisWidget.announce(); // Nie wiem, czy umiescilem to we wlasciwym miejscu
-      thisWidget.value = newValue;
-      //thisWidget.input.value = thisWidget.value;
+
+
+      thisWidget.input.value = thisWidget.value;
     }
 
     initActions () {
@@ -337,6 +339,7 @@
       const thisWidget = this;
 
       thisWidget.input.addEventListener('change', function () {
+        event.preventDefault();
         console.log(thisWidget.value, 'change');
         thisWidget.setValue (thisWidget.input.value);
 
@@ -390,7 +393,7 @@
     initActions() {
       const thisCart = this;
 
-        thisCart.dom.toggleTrigger.addEventListener('click', function(event){
+      thisCart.dom.toggleTrigger.addEventListener('click', function(event){
         event.preventDefault();
         thisCart.dom.wrapper.classList.toggle(classNames.cart.wrapperActive);
       });
@@ -405,7 +408,7 @@
       const generatedDOM  = utils.createDOMFromHTML(generatedHTML);
 
       generatedDOM.appendChild(thisCart.dom.productList);
-      }
+    }
   }
   const app = {
     initMenu: function() {
