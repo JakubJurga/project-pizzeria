@@ -67,9 +67,9 @@
 
   const settings = {
     amountWidget: {
-      defaultValue: 1,
-      defaultMin: 1,
-      defaultMax: 9,
+      defaultValue: 0,
+      defaultMin: 0,
+      defaultMax: 10,
     }, // CODE CHANGED
     // CODE ADDED START
     cart: {
@@ -233,12 +233,12 @@
               optionImage.classList.remove (classNames.menuProduct.imageVisible);
             }
           }
-          price = thisProduct.priceSingle;
-          price *= thisProduct.amountWidget.value;
-          // update calculated price in the HTML
-          thisProduct.priceElem.innerHTML = price;
         }
       }
+      price *= thisProduct.amountWidget.value;
+      //price = thisProduct.priceSingle;
+      // update calculated price in the HTML
+      thisProduct.priceElem.innerHTML = price;
     }
 
     addToCart(){
@@ -257,7 +257,7 @@
         amount: thisProduct.amount,
         priceSingle: thisProduct.priceSingle,
         price: thisProduct.priceSingle * thisProduct.amountWidget.value,
-        //params: thisProduct.prepareCartProductParams();
+        params: thisProduct.prepareCartProductParams()
       };
       return productSummary;
     }
@@ -297,7 +297,7 @@
 
       thisWidget.getElements(element);
       thisWidget.setValue(thisWidget.input.value);
-      thisWidget.value = settings.amountWidget.defaultValue;
+
       thisWidget.initActions();
 
 
@@ -316,21 +316,17 @@
     }
 
     setValue(value){
-
       const thisWidget = this;
-      const newValue = value ? parseInt(value) : 1;
+      const newValue = parseInt(value);
+      thisWidget.value = settings.amountWidget.defaultValue;
 
-
-
-      //thisWidget.value = settings.amountWidget.defaultValue; // teraz jest pusty input
+      //value ? parseInt(value) : 1;
 
       /* TODO: Add validation */
       if(thisWidget.value !== newValue && !isNaN(newValue) && newValue >= settings.amountWidget.defaultMin && newValue <= settings.amountWidget.defaultMax) {
         thisWidget.value = newValue;
         thisWidget.announce();  // Nie wiem, czy umiescilem to we wlasciwym miejscu
       }
-
-
       thisWidget.input.value = thisWidget.value;
     }
 
@@ -407,14 +403,51 @@
 
       const generatedDOM  = utils.createDOMFromHTML(generatedHTML);
 
-      generatedDOM.appendChild(thisCart.dom.productList);
+      thisCart.dom.productList.appendChild(generatedDOM);
+
+      thisCart.products.push(new CartProduct(menuProduct, generatedDOM));
+      console.log('thisCart.products', thisCart.products);
+    }
+  }
+
+  class CartProduct {
+    constructor(menuProduct, element){
+      const thisCartProduct = this;
+
+      thisCartProduct.id = menuProduct.id;
+      thisCartProduct.name = menuProduct.name;
+      thisCartProduct.amount = menuProduct.amount;
+      thisCartProduct.priceSingle = menuProduct.priceSingle;
+      thisCartProduct.price = menuProduct.priceSingle * menuProduct.amount;
+      thisCartProduct.params = menuProduct.params;
+
+      thisCartProduct.getElements(element);
+      thisCartProduct.initAmountWidget();
+      console.log(thisCartProduct);
+    }
+
+    getElements(element){
+      const thisCartProduct = this;
+      thisCartProduct.dom = {};
+      thisCartProduct.dom.wrapper = element;
+      thisCartProduct.dom.amountWidget =element.querySelector(select.cartProduct.amountWidget);
+      thisCartProduct.dom.price = element.querySelector(select.cartProduct.price);
+      thisCartProduct.dom.edit = element.querySelector(select.cartProduct.edit);
+      thisCartProduct.dom.remove = element.querySelector(select.cartProduct.remove);
+    }
+
+    initAmountWidget() {
+      const thisCartProduct = this;
+      thisCartProduct.amountWidget = new AmountWidget(thisCartProduct.dom.amountWidget);
+
+      thisCartProduct.dom.amountWidget.addEventListener('updated', function(){
+
+      });
     }
   }
   const app = {
     initMenu: function() {
       const thisApp = this;
-
-
 
       for (let productData in thisApp.data.products) {
         new Product(productData, thisApp.data.products[productData]);
