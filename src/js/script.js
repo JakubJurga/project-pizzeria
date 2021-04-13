@@ -235,8 +235,10 @@
           }
         }
       }
+      thisProduct.priceSingle = price;
+
       price *= thisProduct.amountWidget.value;
-      //price = thisProduct.priceSingle;
+
       // update calculated price in the HTML
       thisProduct.priceElem.innerHTML = price;
     }
@@ -253,8 +255,8 @@
 
       const productSummary = {
         id: thisProduct.id,
-        name: thisProduct.name,
-        amount: thisProduct.amount,
+        name: thisProduct.data.name,
+        amount: thisProduct.amountWidget.value,
         priceSingle: thisProduct.priceSingle,
         price: thisProduct.priceSingle * thisProduct.amountWidget.value,
         params: thisProduct.prepareCartProductParams()
@@ -273,7 +275,7 @@
         const param = thisProduct.data.params[paramId];
 
         params[paramId] = {
-          name: param.label,
+          label: param.label,
           options: {}
         };
 
@@ -296,6 +298,7 @@
       const thisWidget = this;
 
       thisWidget.getElements(element);
+      thisWidget.value = settings.amountWidget.defaultValue;
       thisWidget.setValue(thisWidget.input.value);
 
       thisWidget.initActions();
@@ -318,8 +321,6 @@
     setValue(value){
       const thisWidget = this;
       const newValue = parseInt(value);
-      thisWidget.value = settings.amountWidget.defaultValue;
-
       //value ? parseInt(value) : 1;
 
       /* TODO: Add validation */
@@ -383,7 +384,7 @@
       thisCart.dom = {};
       thisCart.dom.wrapper = element;
       thisCart.dom.toggleTrigger = thisCart.dom.wrapper.querySelector(select.cart.toggleTrigger);
-      thisCart.dom.productList =  element.querySelector(select.cart.productList);
+      thisCart.dom.productList = thisCart.dom.wrapper.querySelector(select.cart.productList);
     }
 
     initActions() {
@@ -430,7 +431,7 @@
       const thisCartProduct = this;
       thisCartProduct.dom = {};
       thisCartProduct.dom.wrapper = element;
-      thisCartProduct.dom.amountWidget =element.querySelector(select.cartProduct.amountWidget);
+      thisCartProduct.dom.amountWidget = element.querySelector(select.cartProduct.amountWidget);
       thisCartProduct.dom.price = element.querySelector(select.cartProduct.price);
       thisCartProduct.dom.edit = element.querySelector(select.cartProduct.edit);
       thisCartProduct.dom.remove = element.querySelector(select.cartProduct.remove);
