@@ -75,6 +75,11 @@
     cart: {
       defaultDeliveryFee: 20,
     },
+    db: {
+      url: '//localhost:3131',
+      product: 'product',
+      order: 'order',
+    },
   // CODE ADDED END
   };
 
@@ -406,7 +411,7 @@
 
       thisCart.dom.productList.addEventListener('remove', function (event){
         thisCart.remove(event.detail.cartProduct);
-      })
+      });
 
 
     }
@@ -436,18 +441,18 @@
       for (let product of thisCart.products) {
         thisCart.totalNumber = thisCart.totalNumber + product.amount;
         thisCart.subtotalPrice = thisCart.subtotalPrice + product.price;
-      };
+      }
 
       if(thisCart.totalNumber !== 0) {
         thisCart.totalPrice = thisCart.subtotalPrice + thisCart.deliveryFee;
       } else {
         thisCart.totalPrice = 0;
         thisCart.deliveryFee = 0;
-      };
+      }
 
       for (let price of thisCart.dom.totalPrice) {
         price.innerHTML = thisCart.totalPrice;
-      };
+      }
 
       thisCart.dom.subtotalPrice.innerHTML = thisCart.subtotalPrice;
       thisCart.dom.totalNumber.innerHTML = thisCart.totalNumber;
@@ -537,13 +542,31 @@
       const thisApp = this;
 
       for (let productData in thisApp.data.products) {
-        new Product(productData, thisApp.data.products[productData]);
+        new Product(thisApp.data.products[productData].id, thisApp.data.products[productData]);
       }
+    },
+
+    init: function() {
+     const thisApp = this;
+
+     thisApp.initData();
+     thisApp.initCart();
     },
 
     initData: function() {
       const thisApp = this;
-      thisApp.data = dataSource;
+      const url = settings.db.url + '/' + settings.db.product;
+
+      fetch(url)
+        .then(function(rawResponse) {
+          return rawResponse.json();
+        })
+        .then(function(parsedResponse) {
+          thisApp.data.products = parsedResponse;
+          thisApp.initMenu();
+          console.log('parsedResponse', parsedResponse);
+        });
+      thisApp.data = {};
     },
 
     initCart: function() {
@@ -552,20 +575,7 @@
       const cartElem = document.querySelector(select.containerOf.cart);
       thisApp.cart = new Cart(cartElem);
     },
-
-    init: function() {
-      const thisApp = this;
-      // console.log('*** App starting ***');
-      // console.log('thisApp:', thisApp);
-      // console.log('classNames:', classNames);
-      // console.log('settings:', settings);
-      // console.log('templates:', templates);
-
-      thisApp.initData();
-      thisApp.initMenu();
-      thisApp.initCart();
-
-    },
   };
+
   app.init();
 }
