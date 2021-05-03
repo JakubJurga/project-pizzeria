@@ -6,7 +6,9 @@ import Cart from './components/Cart.js';
 
 import Booking from './components/Booking.js';
 
-const app = {
+import Home from './components/Home.js';
+
+export const app = {
   initPages: function(){
     const thisApp = this;
 
@@ -62,6 +64,12 @@ const app = {
 
   },
 
+  initHome: function(){
+   const thisApp = this;
+   const homeContainer = document.querySelector(select.containerOf.homePage);
+   thisApp.home = new Home(homeContainer);
+  },
+
   initMenu: function() {
     const thisApp = this;
 
@@ -72,7 +80,7 @@ const app = {
 
   init: function() {
     const thisApp = this;
-
+    thisApp.initHome();
     thisApp.initPages();
     thisApp.initData();
     thisApp.initCart();
