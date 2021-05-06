@@ -65,9 +65,9 @@ export const app = {
   },
 
   initHome: function(){
-   const thisApp = this;
-   const homeContainer = document.querySelector(select.containerOf.homePage);
-   thisApp.home = new Home(homeContainer);
+    const thisApp = this;
+    const homeContainer = document.querySelector(select.containerOf.homePage);
+    thisApp.home = new Home(homeContainer);
   },
 
   initMenu: function() {

@@ -40,6 +40,7 @@ export const select = {
       input: 'input[type="range"]',
       output: '.output',
     },
+    carousel: '.main-carousel',
   },
   // CODE ADDED START
   cart: {
@@ -53,6 +54,12 @@ export const select = {
     formSubmit: '.cart__order [type="submit"]',
     phone: '[name="phone"]',
     address: '[name="address"]',
+  },
+  home: {
+    orderButton: '.order-online',
+    bookButton: '.book-a-table',
+    openingHours: '.opening-hours',
+    mainOptions: '.options a',
   },
   cartProduct: {
     amountWidget: '.widget-amount',
