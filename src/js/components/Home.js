@@ -48,7 +48,7 @@ class Home {
       app.activatePage('booking');
     });
 
-}
+  }
 
 }
 
