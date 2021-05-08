@@ -29,13 +29,16 @@ class Home {
 
     const elem = document.querySelector('.main-carousel');
     new Flickity(elem, { // eslint-disable-line
-      cellAlign: 'left',
       contain: true,
       autoPlay: true,
       prevNextButtons: false,
       wrapAround: true,
     });
+
+    console.log(elem, 123);
   }
+
+
 
   goToPage() {
     const thisHome = this;
